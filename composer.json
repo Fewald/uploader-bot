@@ -1,0 +1,14 @@
+{
+  "name": "fewald/uploader-bot",
+  "require": {
+    "php": "~7.1",
+    "symfony/console": "3.*",
+    "symfony/dependency-injection": "^3.2",
+    "monolog/monolog": "^1.22",
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    }
+  }
+}
