@@ -3,6 +3,7 @@ namespace System;
 
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
+use Resizer\ImageResizer\ImageResizer;
 use Symfony\Component\DependencyInjection\Reference;
 
 class ContainerBuilder
@@ -24,6 +25,10 @@ class ContainerBuilder
         $this->container->register('logger', Logger::class)
             ->addArgument('convert')
             ->addMethodCall('pushHandler', [new Reference('logger.rotating-handler')]);
+
+        $this->container->register('resizer.image', ImageResizer::class)
+            ->addArgument(__DIR__.'/../../images')
+            ->addArgument(__DIR__.'/../../images_resized');
     }
 
     /**

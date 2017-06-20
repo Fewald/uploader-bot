@@ -5,6 +5,7 @@
     "symfony/console": "3.*",
     "symfony/dependency-injection": "^3.2",
     "monolog/monolog": "^1.22",
+    "eventviva/php-image-resize": "^1.6"
   },
   "autoload": {
     "psr-4": {
