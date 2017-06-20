@@ -4,6 +4,7 @@ namespace Resizer\ImageResizer;
 
 use Eventviva\ImageResize;
 use Eventviva\ImageResizeException;
+use function PHPSTORM_META\type;
 
 class ImageResizer
 {
@@ -25,33 +26,45 @@ class ImageResizer
 
     }
 
+
     public function resize(string $filename)
     {
-        var_dump($filename);
+        $sourcePath = $this->sourcePath.'/'.$filename;
+        $destPath = $this->getSavePath($filename);
 
-        try {
-            $image = new ImageResize($this->sourcePath.'/'.$filename);
+        $size = getimagesize($sourcePath);
+        $image = $this->createImage($sourcePath);
 
-            $ratio = $image->getSourceHeight() <=> $image->getSourceWidth();
+        $resizedImage = $this->resizeImage($size, $image, $destPath);
 
-            switch ($ratio) {
-                case 1:
-                    $image->resizeToHeight(640);
-                    break;
-                case -1:
-                    $image->resizeToWidth(640);
-                    break;
-                case 0: //default
-                default:
-                    $image->resize(640, 640);
-                    break;
-            }
+    }
 
-            $path = $this->getSavePath($filename);
-            $image->save($path, IMAGETYPE_JPEG);
-        } catch (ImageResizeException $e) {
-            throw $e;
+    /**
+     * @param $file
+     * @return resource
+     * @throws \Exception
+     */
+    protected function createImage($file)
+    {
+        $extension = strtolower(strrchr($file, '.'));
+
+        switch ($extension) {
+            case '.jpg':
+            case '.jpeg':
+                $img = @imagecreatefromjpeg($file);
+                break;
+            case '.gif':
+                $img = @imagecreatefromgif($file);
+                break;
+            case '.png':
+                $img = @imagecreatefrompng($file);
+                break;
+            default:
+                throw new \Exception("Extension is not supported: $file``");
+                break;
         }
+
+        return $img;
     }
 
     /**
@@ -63,8 +76,37 @@ class ImageResizer
         $filenameArray = explode('.', $filename);
         $name = $filenameArray[0];
 
-        $path = $this->sourcePath.'/'.$name.'.jpg';
+        $path = $this->destPath.'/'.$name.'.jpg';
 
         return $path;
+    }
+
+    protected function resizeImage($size, $src, $destPath)
+    {
+        $width = $oldWidth = $size[0];
+        $height = $oldHeight = $size[1];
+        $ratio = $oldWidth / $oldHeight;
+        $isBigger = max($oldHeight, $oldWidth) > 640;
+        if ($isBigger) {
+            if ($ratio > 1) {
+                $width = 640;
+                $height = 640 / $ratio;
+            } else {
+                $width = 640 * $ratio;
+                $height = 640;
+            }
+        }
+
+
+        $dst = imagecreatetruecolor(640, 640);
+
+        $clear = imagecolorallocate($dst, 255, 255, 255);
+        imagefill($dst, 0, 0, $clear);
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
+        imagejpeg($dst, $destPath, 100);
+
+        // free resources
+        imagedestroy($src);
+        imagedestroy($dst);
     }
 }

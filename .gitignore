@@ -4,3 +4,5 @@
 !/images/.gitkeep
 /images_resized/
 !/images_resized/.gitkeep
+/logs/
+!/logs/.gitkeep

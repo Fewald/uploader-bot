@@ -3,6 +3,7 @@
 
 namespace Console;
 
+use Psr\Log\LoggerInterface;
 use Resizer\ImageResizer\ImageResizer;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +13,8 @@ class ResizeCommand extends ContainerAwareCommand
 {
     /** @var ImageResizer */
     protected $resizer;
+    /** @var  LoggerInterface */
+    protected $logger;
 
     protected $extensions = ['jpg', 'png'];
 
@@ -25,6 +28,7 @@ class ResizeCommand extends ContainerAwareCommand
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $this->logger = $this->getContainer()->get('logger');
         $this->resizer = $this->getContainer()->get('resizer.image');
 
         parent::initialize($input, $output);
@@ -35,10 +39,21 @@ class ResizeCommand extends ContainerAwareCommand
         $count = $input->getArgument('count');
 
         $list = $this->getFileList(__DIR__.'/../../images');
-
+        $processed = 0;
         foreach ($list as $file) {
-            $this->resizer->resize($file);
+            if ($count && $processed == $count) {
+                break;
+            }
+            $filename = basename($file);
+            $this->resizer->resize($filename);
+
+            $this->logger->info("Process $file");
+            $output->writeln("Process $file");
+
+            $processed++;
         }
+
+        $output->writeln('Done');
     }
 
     /**
