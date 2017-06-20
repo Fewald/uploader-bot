@@ -34,6 +34,7 @@ class ContainerBuilder
 
         $this->container->register('file.uploader', FileUploader::class)
             ->addArgument(new Reference('api.google-drive'));
+
         $this->container->register('api.google-drive', GoogleDriveApi::class);
     }
 

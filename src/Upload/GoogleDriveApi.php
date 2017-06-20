@@ -17,27 +17,17 @@ class GoogleDriveApi
 
         }
 
-
         $content = file_get_contents($file);
 
-        $fileMetadata = new \Google_Service_Drive_DriveFile(
-            [
-                'name' => basename($file),
-            ]
-        );
-        $file = $this->service->files->create(
-            $fileMetadata,
-            [
-                'data' => $content,
-                'mimeType' => 'image/jpeg',
-                'uploadType' => 'multipart',
-                'fields' => 'id',
-            ]
-        );
+        $fileMetadata = new \Google_Service_Drive_DriveFile(array(
+            'name' => basename($file)));
+        $file = $this->service->files->create($fileMetadata, array(
+            'data' => $content,
+            'mimeType' => 'image/jpeg',
+            'uploadType' => 'multipart',
+            'fields' => 'id'));
 
-        printf("File ID: %s\n", $file->id);
-
-
+        return $file->id;
     }
 
 
@@ -50,7 +40,7 @@ class GoogleDriveApi
         $client = new \Google_Client();
 
         $client->setApplicationName('Bot Uploader');
-        $client->setScopes([\Google_Service_Drive::DRIVE, \Google_Service_Drive::DRIVE_FILE, \Google_Service_Drive::DRIVE_METADATA]);
+        $client->setScopes([\Google_Service_Drive::DRIVE_FILE]);
         $client->setAuthConfig(__DIR__.'/../../client_secret.json');
         $client->setAccessType('offline');
 
