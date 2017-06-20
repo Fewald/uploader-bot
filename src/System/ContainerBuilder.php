@@ -3,8 +3,10 @@ namespace System;
 
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
-use Resizer\ImageResizer\ImageResizer;
+use Resizer\ImageResizer\GDImageResizer;
 use Symfony\Component\DependencyInjection\Reference;
+use Upload\FileUploader;
+use Upload\GoogleDriveApi;
 
 class ContainerBuilder
 {
@@ -26,9 +28,13 @@ class ContainerBuilder
             ->addArgument('convert')
             ->addMethodCall('pushHandler', [new Reference('logger.rotating-handler')]);
 
-        $this->container->register('resizer.image', ImageResizer::class)
+        $this->container->register('resizer.image', GDImageResizer::class)
             ->addArgument(__DIR__.'/../../images')
             ->addArgument(__DIR__.'/../../images_resized');
+
+        $this->container->register('file.uploader', FileUploader::class)
+            ->addArgument(new Reference('api.google-drive'));
+        $this->container->register('api.google-drive', GoogleDriveApi::class);
     }
 
     /**

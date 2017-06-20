@@ -2,11 +2,7 @@
 
 namespace Resizer\ImageResizer;
 
-use Eventviva\ImageResize;
-use Eventviva\ImageResizeException;
-use function PHPSTORM_META\type;
-
-class ImageResizer
+class GDImageResizer
 {
     /** @var  string */
     protected $sourcePath;
@@ -35,8 +31,7 @@ class ImageResizer
         $size = getimagesize($sourcePath);
         $image = $this->createImage($sourcePath);
 
-        $resizedImage = $this->resizeImage($size, $image, $destPath);
-
+        $this->resizeImage($size, $image, $destPath);
     }
 
     /**
