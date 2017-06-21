@@ -9,6 +9,7 @@ $container = require_once __DIR__.DIRECTORY_SEPARATOR.'bootstrap.php';
 $console = new \System\Application();
 $console->add(new \Console\ResizeCommand());
 $console->add(new \Console\UploadCommand());
+$console->add(new \Console\ScheduleCommand());
 
 $console->setContainer($container);
 $console->run();
