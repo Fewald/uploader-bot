@@ -25,7 +25,7 @@ function upload(GearmanJob $job)
             'name' => basename($file),
         )
     );
-    $file = $service->files->create(
+    $result = $service->files->create(
         $fileMetadata,
         array(
             'data' => $content,
@@ -35,9 +35,20 @@ function upload(GearmanJob $job)
         )
     );
 
-    return $file->id;
+    pushToDone($file);
+
+    return $result->id;
 }
 
+/**
+ * @param $file
+ */
+function pushToDone($file): void
+{
+    $client = new GearmanClient();
+    $client->addServer();
+    $client->doBackground('done', $file);
+}
 
 /**
  * Returns an authorized API client.

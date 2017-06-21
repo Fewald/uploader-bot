@@ -45,6 +45,15 @@ function resize(GearmanJob $job)
     imagedestroy($src);
     imagedestroy($dst);
 
+    unlink($filename);
+    pushToUpload($destPath);
+}
+
+/**
+ * @param $destPath
+ */
+function pushToUpload($destPath): void
+{
     $client = new GearmanClient();
     $client->addServer();
     $client->doBackground('upload', $destPath);
