@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches:
+    tags:
+  pull_request:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [7.1, 7.2, 7.3]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Show php version
+      run: php${{ matrix.php }} -v && composer -V
+    - name: Install dependencies
+      run: composer install    

@@ -61,7 +61,7 @@ class ScheduleCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param $path
+     * @param $path string
      * @return array
      */
     protected function getFileList($path)
